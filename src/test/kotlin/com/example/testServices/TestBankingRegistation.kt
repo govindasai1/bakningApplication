@@ -1,6 +1,7 @@
 package com.example.testServices
 
 import com.example.di.koinModule
+import com.example.methods.rowToIt
 import com.example.models.Message
 import com.example.responces.successfulCreation
 import com.example.services.BankingLogin
@@ -14,6 +15,8 @@ import com.example.testParameters.*
 import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.After
@@ -65,7 +68,7 @@ class TestBankingRegistation {
     }
 
     @Test
-    fun retrieveBal() = testApplication {
+    fun testRetrieveBal() = testApplication {
         val result = bankingServiceObj.gettingBalance(id)
         if (result.equals(Message)) assertTrue(true)
         else assertFalse(false)

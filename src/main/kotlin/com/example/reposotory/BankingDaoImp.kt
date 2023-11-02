@@ -18,24 +18,30 @@ import org.jetbrains.exposed.sql.update
 class BankingDaoImp:BankingDao {
     override suspend fun accountCreation(user: User): Message {
         val random = (123443413..999999999).random()
-        DatabaseFactory.dbQuery {
-            UsersTable.insert {
-                it[userName] = user.userName
-                it[password] = user.password
-                it[email] = user.password
-                it[phoneNumber] = user.phoneNumber
-            }
-        }
-        val userI = gettingUserId(user.userName)
-        DatabaseFactory.dbQuery {
-            AccountTable.insert {
-                it[userId] = userI
-                it[accountNumber] = random.toString()
-                it[balance] = 0.0F
+        try {
 
+            DatabaseFactory.dbQuery {
+                UsersTable.insert {
+                    it[userName] = user.userName
+                    it[password] = user.password
+                    it[email] = user.password
+                    it[phoneNumber] = user.phoneNumber
+                }
             }
+            val userI = gettingUserId(user.userName)
+            DatabaseFactory.dbQuery {
+                AccountTable.insert {
+                    it[userId] = userI
+                    it[accountNumber] = random.toString()
+                    it[balance] = 0.0F
+
+                }
+            }
+            return successfulCreation
+        }catch (e:Exception){
+//            throw ErrorException("CONFLICT AT DATABASE OCCURRED", HttpStatusCode.InternalServerError)
+            return Message("$e")
         }
-        return successfulCreation
     }
 
     override suspend fun login(details: LoginDetails): Id? {
